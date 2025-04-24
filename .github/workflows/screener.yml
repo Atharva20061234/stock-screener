@@ -2,12 +2,16 @@ name: Run Stock Screener Every 15 Minutes During NSE Trading Hours
 
 on:
   schedule:
-    - cron: '45,0,15,30,45 3-9 * * *'  # Runs every 15 minutes from 9:15 AM IST to 3:30 PM IST (3:45 AM to 10:00 AM UTC)
-  workflow_dispatch:  # Allows manual trigger
+    - cron: '45,0,15,30,45 3-9 * * *'  # 9:15 AM to 3:30 PM IST
+  workflow_dispatch:
 
 jobs:
   run-screener:
     runs-on: ubuntu-latest
+
+    env:  # <-- Add environment variables here
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
     steps:
       - name: Checkout code
@@ -24,8 +28,4 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Stock Screener
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python screener.py
-
