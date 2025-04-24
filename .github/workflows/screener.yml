@@ -24,4 +24,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Stock Screener
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python screener.py
+
