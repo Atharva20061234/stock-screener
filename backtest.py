@@ -1,7 +1,7 @@
 import backtrader as bt
 import yfinance as yf
 import pandas as pd
-from nifty500_stocks import stock_list  # ✅ Your Nifty 500 list
+from nifty500_stocks import stock_list
 
 class SimpleBuyAndHold(bt.Strategy):
     def __init__(self):
@@ -23,17 +23,11 @@ def clean_columns(df):
 def run_backtest(ticker, start='2022-01-01', end='2025-04-01'):
     try:
         df = yf.download(ticker, start=start, end=end, auto_adjust=False, progress=False)
-
         if df.empty:
             print(f"⚠️ No data for {ticker}, skipping.")
             return
 
         df = clean_columns(df)
-
-        if 'close' not in df.columns:
-            print(f"⚠️ 'close' column not found for {ticker}, skipping.")
-            return
-
         df.dropna(subset=['close'], inplace=True)
         df.index = pd.to_datetime(df.index)
 
@@ -51,10 +45,8 @@ def run_backtest(ticker, start='2022-01-01', end='2025-04-01'):
     except Exception as e:
         print(f"❌ Error with {ticker}: {e}")
 
-# 🧪 Loop through a subset for testing (e.g., first 10 stocks)
 if __name__ == "__main__":
     print("📊 Running backtest on Nifty 500 stocks...\n")
-    for ticker in stock_list:  # ⚠️ Use `[:10]` for fast testing; change to `stock_list` for full
+    for ticker in stock_list[:500]:  # Change to `stock_list` to run full
         print(f"🔄 Backtesting {ticker}...")
         run_backtest(ticker)
-
