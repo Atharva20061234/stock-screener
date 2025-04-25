@@ -3,7 +3,7 @@ name: Run Stock Screener
 on:
   schedule:
     # Runs at 10:00 AM UTC (3:30 PM IST Mon–Fri)
-    - cron: '0 10 * * 1-5'  
+    - cron: '0 10 * * 1-5'
   workflow_dispatch:
 
 jobs:
@@ -28,6 +28,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run screener
+      - name: Test Telegram Alert
+        run: |
+          python -c 'import requests; requests.post("https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage", data={"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "Test Alert!"})'
+
+      - name: Run Screener
         run: |
           python screener.py
