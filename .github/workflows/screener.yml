@@ -1,17 +1,20 @@
-name: Test Telegram Alert
+name: Run Stock Screener
 
 on:
+  schedule:
+    - cron: '0 10 * * 1-5'  # Runs at 10:00 AM UTC (3:30 PM IST Mon–Fri)
   workflow_dispatch:
 
 jobs:
-  send_telegram:
+  screener:
     runs-on: ubuntu-latest
+
     env:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -20,17 +23,9 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install requests
-
-      - name: Send test Telegram alert
         run: |
-          python -c "
-import os, requests
-token = os.getenv('TELEGRAM_BOT_TOKEN')
-chat_id = os.getenv('TELEGRAM_CHAT_ID')
-url = f'https://api.telegram.org/bot{token}/sendMessage'
-payload = {'chat_id': chat_id, 'text': '✅ Telegram Alert Test from GitHub Actions!'}
-r = requests.post(url, data=payload)
-print(r.status_code, r.text)
-"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
+      - name: Run screener
+        run: python screener.py
